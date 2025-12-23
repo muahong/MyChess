@@ -2,20 +2,20 @@ import { Chess } from 'chess.js';
 
 const PIECE_IMAGES = {
     'w': {
-        'p': './assets/pieces/wp.svg',
-        'n': './assets/pieces/wn.svg',
-        'b': './assets/pieces/wb.svg',
-        'r': './assets/pieces/wr.svg',
-        'q': './assets/pieces/wq.svg',
-        'k': './assets/pieces/wk.svg'
+        'p': './public/assets/pieces/wp.svg',
+        'n': './public/assets/pieces/wn.svg',
+        'b': './public/assets/pieces/wb.svg',
+        'r': './public/assets/pieces/wr.svg',
+        'q': './public/assets/pieces/wq.svg',
+        'k': './public/assets/pieces/wk.svg'
     },
     'b': {
-        'p': './assets/pieces/bp.svg',
-        'n': './assets/pieces/bn.svg',
-        'b': './assets/pieces/bb.svg',
-        'r': './assets/pieces/br.svg',
-        'q': './assets/pieces/bq.svg',
-        'k': './assets/pieces/bk.svg'
+        'p': './public/assets/pieces/bp.svg',
+        'n': './public/assets/pieces/bn.svg',
+        'b': './public/assets/pieces/bb.svg',
+        'r': './public/assets/pieces/br.svg',
+        'q': './public/assets/pieces/bq.svg',
+        'k': './public/assets/pieces/bk.svg'
     }
 };
 
