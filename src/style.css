@@ -1,0 +1,417 @@
+:root {
+    --bg-color: #0f172a;
+    --panel-bg: rgba(30, 41, 59, 0.7);
+    --board-light: #e2e8f0;
+    --board-dark: #334155;
+    --highlight-move: rgba(56, 189, 248, 0.5);
+    --highlight-check: rgba(239, 68, 68, 0.6);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-color: #38bdf8;
+    --font-family: 'Outfit', sans-serif;
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+    background: var(--bg-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image:
+        radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 40%);
+}
+
+#app {
+    width: 100%;
+    max-width: 1200px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.game-header {
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--panel-bg);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    border: var(--glass-border);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.game-header h1 {
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin: 0;
+    background: linear-gradient(to right, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.status-panel {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.game-container {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+}
+
+.board-wrapper {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.board-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.coordinates-rank {
+    display: flex;
+    flex-direction: column;
+    padding: 0 8px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.coordinates-rank span {
+    height: 75px;
+    /* (600px / 8) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.coordinates-file {
+    display: flex;
+    padding: 4px 0;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.coordinates-file span {
+    width: 75px;
+    /* (600px / 8) */
+    display: flex;
+    justify-content: center;
+}
+
+.chess-board {
+    width: 600px;
+    height: 600px;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    border: 2px solid var(--board-dark);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.square.light {
+    background-color: var(--board-light);
+    color: var(--board-dark);
+    /* for coordinates if needed */
+}
+
+.square.dark {
+    background-color: var(--board-dark);
+}
+
+.square.selected {
+    background-color: rgba(251, 191, 36, 0.6) !important;
+}
+
+.square.highlight {
+    position: relative;
+}
+
+.square.highlight::after {
+    content: '';
+    position: absolute;
+    width: 20%;
+    height: 20%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+}
+
+.square.check {
+    background-color: var(--highlight-check) !important;
+}
+
+.square.last-move {
+    background-color: rgba(255, 255, 0, 0.3);
+}
+
+.piece {
+    width: 80%;
+    height: 80%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    /* pointer-events: none; REMOVED to allow drag */
+    z-index: 10;
+}
+
+.piece.draggable {
+    cursor: grab;
+}
+
+.piece.dragging {
+    cursor: grabbing;
+    z-index: 1000;
+}
+
+.game-info {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(12px);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: var(--glass-border);
+}
+
+.panel h3 {
+    margin-top: 0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+}
+
+.btn {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 0.5rem;
+}
+
+.btn.primary {
+    background: var(--accent-color);
+    color: #0f172a;
+}
+
+.btn.primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.btn.secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--text-secondary);
+}
+
+.control-group {
+    margin-bottom: 1rem;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.select-input {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--text-secondary);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+}
+
+.select-input option {
+    background: #1e293b;
+    color: var(--text-primary);
+}
+
+.select-input:focus {
+    border-color: var(--accent-color);
+}
+
+.btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.move-list-content {
+    height: 200px;
+    overflow-y: auto;
+    font-family: monospace;
+    color: var(--text-primary);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.move-entry {
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Alternate row backgrounds by selecting pairs of items in the grid */
+.move-entry:nth-child(4n-3),
+.move-entry:nth-child(4n-2) {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.move-entry:hover {
+    background: rgba(56, 189, 248, 0.1) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--board-dark);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* Analysis Panel */
+.analysis-panel {
+    border-left: 4px solid var(--accent-color);
+}
+
+.analysis-grade {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.grade-best {
+    color: #10b981;
+}
+
+.grade-accuracy {
+    color: #38bdf8;
+}
+
+.grade-inaccuracy {
+    color: #f59e0b;
+}
+
+.grade-mistake {
+    color: #f43f5e;
+}
+
+.grade-blunder {
+    color: #e11d48;
+}
+
+.analysis-suggestion {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-family: monospace;
+}
+
+
+/* Promotion Modal */
+.promotion-modal {
+    position: fixed;
+    /* Changed from absolute to fixed for viewport centering */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px);
+    border: var(--glass-border);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+    z-index: 2000;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.promotion-modal.hidden {
+    display: none;
+}
+
+.promotion-option {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.promotion-option:hover {
+    background: var(--accent-color);
+    color: #0f172a;
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .chess-board {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
+        position: relative;
+        /* Ensure modal is centered relative to board */
+    }
+}
