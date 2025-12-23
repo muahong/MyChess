@@ -2,7 +2,6 @@ import { Chess } from 'chess.js';
 import { ChessBoard } from './board.js';
 import { getBestMove } from './ai.js';
 import { analyzeMove } from './analysis.js';
-import './style.css';
 
 const game = new Chess();
 const statusEl = document.getElementById('game-status');
