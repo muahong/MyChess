@@ -174,7 +174,12 @@ function scoreMove(move) {
     return score;
 }
 
+let nodesVisited = 0;
+
 export function getBestMove(game, depth = 3) {
+    nodesVisited = 0;
+    const startTime = performance.now();
+
     if (game.isGameOver()) return null;
 
     let bestMove = null;
@@ -209,11 +214,16 @@ export function getBestMove(game, depth = 3) {
         }
         if (beta <= alpha) break;
     }
+    const endTime = performance.now();
+    console.log(`Visited ${nodesVisited} nodes in ${(endTime - startTime).toFixed(2)}ms (Depth ${depth})`);
     return bestMove || moves[0];
 }
 
+
 function minimax(game, depth, alpha, beta, isMaximizing) {
+    nodesVisited++;
     if (depth === 0) {
+
         // Quiescence Search at leaf nodes
         return quiescence(game, alpha, beta, isMaximizing);
     }
@@ -254,7 +264,9 @@ function minimax(game, depth, alpha, beta, isMaximizing) {
 
 // Quiescence Search to avoid horizon effect
 function quiescence(game, alpha, beta, isMaximizing) {
+    nodesVisited++;
     const standPat = evaluateBoard(game);
+
 
     if (isMaximizing) {
         if (standPat >= beta) return beta;
