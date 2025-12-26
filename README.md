@@ -1,6 +1,6 @@
 # Grandmaster AI - Premium Chess Experience
 
-A modern, high-performance chess application featuring advanced move analysis, difficulty levels, and a sleek, responsive design.
+A modern, high-performance chess application featuring advanced move analysis, difficulty levels, and a sleek, responsive design..
 
 ![MyChess Gameplay](C:/Users/son.nguyen/.gemini/antigravity/brain/83cc25cc-d343-464f-810f-f87737346862/chess_final_verification_1766454540244.png)
 
