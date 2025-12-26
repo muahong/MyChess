@@ -26,18 +26,23 @@ export class ChessBoard {
         this.onMove = onMove;
         this.selectedSquare = null;
         this.possibleMoves = [];
-        this.flipped = false; // Add option to flip board later
+        this.flipped = false;
+    }
+
+    setFlipped(value) {
+        this.flipped = value;
     }
 
     render() {
         this.boardEl.innerHTML = '';
         const board = this.game.board(); // 8x8 array of null or objects
 
-        // Board is 0..7 rows (rank 8 down to 1)
-        // 0..7 cols (file a to h)
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                // When flipped, reverse both row and column indices
+                const r = this.flipped ? 7 - i : i;
+                const c = this.flipped ? 7 - j : j;
 
-        for (let r = 0; r < 8; r++) {
-            for (let c = 0; c < 8; c++) {
                 const squareVal = board[r][c];
                 const squareEl = document.createElement('div');
                 const squareName = String.fromCharCode(97 + c) + (8 - r); // e.g. 'a8'
@@ -77,8 +82,6 @@ export class ChessBoard {
                     pieceImg.style.backgroundImage = `url(${PIECE_IMAGES[squareVal.color][squareVal.type]})`;
 
                     // Enable Drag only for current turn's pieces
-                    // Or allow dragging any piece but validation fails? 
-                    // Better UI is only allow own pieces.
                     if (squareVal.color === this.game.turn()) {
                         pieceImg.draggable = true;
                         pieceImg.classList.add('draggable');

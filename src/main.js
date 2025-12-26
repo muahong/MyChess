@@ -17,14 +17,21 @@ const analysisSuggestionEl = document.getElementById('analysis-suggestion');
 const analyzeBtn = document.getElementById('analyze-btn');
 
 let lastPlayerMove = null;
-
-// Sound effects (optional, using Audio if allowed, or skip)
-// Simple sounds from web or generated? Skip for now.
+let playerColor = 'w'; // 'w' for White, 'b' for Black
 
 const board = new ChessBoard('board', game, onUserMove);
 
 const promotionModal = document.getElementById('promotion-modal');
 let pendingPromotion = null;
+
+// Player Color Selector
+const playerColorEl = document.getElementById('player-color');
+if (playerColorEl) {
+    playerColorEl.addEventListener('change', () => {
+        playerColor = playerColorEl.value;
+        startNewGame();
+    });
+}
 
 // Initialize Promotion Listeners
 document.querySelectorAll('.promotion-option').forEach(option => {
@@ -35,8 +42,8 @@ document.querySelectorAll('.promotion-option').forEach(option => {
 });
 
 function onUserMove(from, to) {
-    // Only allow moves for the current player (White)
-    if (game.turn() !== 'w') return;
+    // Only allow moves for the player's color
+    if (game.turn() !== playerColor) return;
 
     // Check if this move needs promotion
     const moves = game.moves({ verbose: true });
@@ -64,10 +71,7 @@ function finishPromotion(promotionPiece) {
 function attemptMove(from, to, promotion = undefined) {
     // Attempt move
     try {
-        const move = game.move({ from, to, promotion: promotion || 'q' }); // 'q' fallback if somehow undefined but shouldn't be for prom
-        // Actually if we pass 'q' for non-promotion move, chess.js ignores it strictly? 
-        // No, chess.js ignores promotion key if not valid. 
-        // But for explicit promotion we must pass it.
+        const move = game.move({ from, to, promotion: promotion || 'q' });
 
         if (move === null) return; // Illegal move
 
@@ -168,29 +172,35 @@ function updateMoveHistory() {
 }
 
 function updateCapturedPieces() {
-    // Basic captured logic
-    // We infer captured from history or raw board count?
-    // Easiest is to just count current pieces vs starting pieces.
-    const current = game.board().flat().filter(p => p !== null);
-    const whitePieces = current.filter(p => p.color === 'w').map(p => p.type).sort();
-    const blackPieces = current.filter(p => p.color === 'b').map(p => p.type).sort();
-
-    // This doesn't easily tell us WHAT was captured without diffing. 
-    // Just ignore visual captured list for MVP or parsing history properly.
-    // Let's skip detailed captured visual for now to save complexity, or just show material count.
+    // Basic captured logic - skip for now
 }
 
-document.getElementById('reset-btn').addEventListener('click', () => {
+function startNewGame() {
     game.reset();
     lastPlayerMove = null;
     if (analysisPanel) analysisPanel.classList.add('hidden');
+
+    // Flip board based on player color
+    board.setFlipped(playerColor === 'b');
     board.render();
     updateStatus();
+
+    // If player is Black, AI (White) moves first
+    if (playerColor === 'b') {
+        setTimeout(makeAIMove, 300);
+    }
+}
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+    // Read current player color selection
+    if (playerColorEl) {
+        playerColor = playerColorEl.value;
+    }
+    startNewGame();
 });
 
 document.getElementById('undo-btn').addEventListener('click', () => {
-    // If it's AI's turn, undo once (AI's move) then twice (Player's move)
-    // If it's Player's turn, undo twice (AI's move + Player's move)
+    // Undo both moves (player + AI)
     if (game.history().length >= 2) {
         game.undo();
         game.undo();
@@ -207,3 +217,4 @@ document.getElementById('undo-btn').addEventListener('click', () => {
 // Initial Render
 board.render();
 updateStatus();
+
